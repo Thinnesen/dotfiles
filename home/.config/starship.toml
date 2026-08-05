@@ -1,0 +1,22 @@
+# Minimal, fast prompt — directory, git, duration, then a purple ❯ on its own line
+add_newline = false
+format = "$directory$git_branch$git_status$cmd_duration$line_break$character"
+
+[character]
+success_symbol = "[❯](purple)"
+error_symbol = "[❯](red)"
+
+[directory]
+truncation_length = 3
+style = "bold cyan"
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "yellow"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "dimmed white"

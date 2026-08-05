@@ -1,0 +1,50 @@
+# herdr — tmux-style keybindings on a ctrl+space prefix
+
+onboarding = false
+
+[theme]
+name = "rose-pine"
+
+auto_switch = false
+[keys]
+prefix = "ctrl+space"
+
+# panes (tmux muscle memory: " splits below, % splits beside)
+split_horizontal = "prefix+double_quote"
+split_vertical   = "prefix+percent"
+focus_pane_left  = "prefix+h"
+focus_pane_down  = "prefix+j"
+focus_pane_up    = "prefix+k"
+focus_pane_right = "prefix+l"
+close_pane       = "prefix+x"
+zoom             = "prefix+z"
+resize_mode      = "prefix+r"
+
+# tabs (tmux windows)
+new_tab      = "prefix+c"
+close_tab    = "prefix+ampersand"
+rename_tab   = "prefix+comma"
+previous_tab = "prefix+p"
+next_tab     = "prefix+shift+n"
+switch_tab   = "prefix+1..9"
+
+# spaces / session (tmux muscle memory: s opens the session/space chooser)
+new_workspace    = "prefix+n"
+detach           = "prefix+d"
+workspace_picker = "prefix+s"
+settings         = "prefix+shift+s"  # moved off prefix+s (default) to free it for spaces
+goto             = "prefix+a"        # agent navigator popup (a for agent); also unshadows prefix+g for lazygit
+
+# space picker movement: vim j/k plus arrow keys
+navigate_workspace_up   = ["up", "k"]
+navigate_workspace_down = ["down", "j"]
+copy_mode        = "prefix+["
+toggle_sidebar   = "prefix+b"
+
+# lazygit popup
+[[keys.command]]
+key = "prefix+g"
+type = "popup"
+command = "lazygit"
+width = "85%"
+height = "85%"

@@ -1,0 +1,14 @@
+# git-delta: syntax-highlighted diffs (included from ~/.gitconfig)
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	dark = true
+	syntax-theme = Catppuccin Mocha
+[merge]
+	conflictstyle = zdiff3
+[diff]
+	colorMoved = default

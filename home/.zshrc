@@ -1,0 +1,109 @@
+# ~/.zshrc, managed in ~/dotfiles (symlinked)
+
+# Machine-local overrides and secrets live outside the repo:
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+
+# --- Homebrew: macOS Apple Silicon, macOS Intel, then Linuxbrew; skip if absent ---
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [ -x "$_brew" ]; then
+    eval "$("$_brew" shellenv)"
+    break
+  fi
+done
+unset _brew
+
+# --- PATH ---
+# /usr/local/bin before brew: Atomic Vault's hardened stubs (npm, ...) live there
+# and must shadow the real binaries they wrap (see `av doctor`).
+export PATH="$HOME/.local/bin:$HOME/.local/go/bin:$HOME/go/bin:/usr/local/bin:$PATH"
+
+# --- Editor ---
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# --- History ---
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+setopt SHARE_HISTORY          # share history across sessions
+setopt HIST_IGNORE_ALL_DUPS   # no duplicate entries
+setopt HIST_IGNORE_SPACE      # commands starting with space are not saved
+setopt HIST_REDUCE_BLANKS
+setopt INC_APPEND_HISTORY
+
+# --- Shell options ---
+setopt AUTO_CD                # `..` or a dir name alone cd's into it
+setopt INTERACTIVE_COMMENTS
+unsetopt BEEP
+
+# --- Completion ---
+# Automic Vault chowns the brew tree to its service user, which compaudit would
+# flag. Its launcher mirrors brew completions into a user-owned dir; prefer that
+# mirror and drop the protected prefix dir from fpath (per `av` homebrew docs),
+# so compaudit stays fully strict. Without av, use the brew prefix as usual.
+_av_mirror="$HOME/.local/share/automic-vault/homebrew/zsh/site-functions"
+if [ -d "$_av_mirror" ]; then
+  fpath=("$_av_mirror" ${fpath:#$HOMEBREW_PREFIX/share/zsh/site-functions})
+elif [ -n "$HOMEBREW_PREFIX" ]; then
+  fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
+fi
+unset _av_mirror
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # case-insensitive
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# --- Keybindings ---
+bindkey -e
+bindkey '^[[1;5C' forward-word    # Ctrl+Right
+bindkey '^[[1;5D' backward-word   # Ctrl+Left
+bindkey '^[[H'    beginning-of-line
+bindkey '^[[F'    end-of-line
+bindkey '^[[3~'   delete-char
+
+# --- Modern CLI replacements ---
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -l --icons --group-directories-first --git'
+alias la='eza -la --icons --group-directories-first --git'
+alias lt='eza --tree --level=2 --icons'
+alias cat='bat --paging=never'
+alias vim='nvim'
+alias vi='nvim'
+alias grep='grep --color=auto'
+alias lg='lazygit'
+alias python='python3'
+
+# --- kubectl completion (skipped if not installed) ---
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+
+# --- fzf: Catppuccin Mocha colors + fd as default source ---
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS=" \
+--height=60% --layout=reverse --border=rounded \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
+--color=selected-bg:#45475a"
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {}'"
+
+# --- Tool inits (each skipped if the tool is not installed yet) ---
+command -v fzf >/dev/null && source <(fzf --zsh)                     # Ctrl+R history, Ctrl+T files, Alt+C cd
+command -v zoxide >/dev/null && eval "$(zoxide init zsh --cmd cd)"   # cd learns your habits; `cd foo` jumps by frecency
+command -v starship >/dev/null && eval "$(starship init zsh)"        # prompt
+
+# --- Autosuggestions + syntax highlighting (highlighting must be last) ---
+if [ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6c7086'
+  bindkey '^f' autosuggest-accept
+fi
+if [ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+  source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+# --- Splash on fresh terminals (skip tmux/herdr panes, VS Code, nested shells) ---
+if [[ -o interactive && -z "$TMUX" && -z "$HERDR_ENV" && "$TERM_PROGRAM" != "vscode" ]] && command -v fastfetch >/dev/null; then
+  fastfetch
+fi

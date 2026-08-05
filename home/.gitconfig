@@ -1,0 +1,15 @@
+# gh is resolved from PATH so the same config works on macOS and Linuxbrew
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+[user]
+	name = Thinnesen
+	email = 92097991+Thinnesen@users.noreply.github.com
+[include]
+	path = ~/.config/git/delta.gitconfig
+# Machine-local overrides, git-ignored; a missing file is silently skipped
+[include]
+	path = ~/.gitconfig.local
