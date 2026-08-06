@@ -136,7 +136,7 @@ command -v starship >/dev/null && eval "$(starship init bash)"
 
 # fzf key bindings (Ctrl+R history, Ctrl+T files, Alt+C cd) and completion
 command -v fzf >/dev/null && eval "$(fzf --bash)"
-# /usr/local/bin before brew: Atomic Vault's hardened stubs must shadow brew binaries
+# /usr/local/bin before brew: Automic Vault's hardened stubs must shadow brew binaries
 export PATH="$HOME/.local/go/bin:$HOME/go/bin:/usr/local/bin:$PATH"
 
 # Use neovim as default editor

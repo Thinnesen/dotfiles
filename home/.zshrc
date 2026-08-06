@@ -13,7 +13,7 @@ done
 unset _brew
 
 # --- PATH ---
-# /usr/local/bin before brew: Atomic Vault's hardened stubs (npm, ...) live there
+# /usr/local/bin before brew: Automic Vault's hardened stubs (npm, ...) live there
 # and must shadow the real binaries they wrap (see `av doctor`).
 export PATH="$HOME/.local/bin:$HOME/.local/go/bin:$HOME/go/bin:/usr/local/bin:$PATH"
 
@@ -48,6 +48,11 @@ elif [ -n "$HOMEBREW_PREFIX" ]; then
   fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
 fi
 unset _av_mirror
+# User-managed completions: cask completions the av mirror skips because they
+# resolve outside the brew prefix (e.g. _wezterm from the app bundle).
+_user_fns="$HOME/.local/share/zsh/site-functions"
+[ -d "$_user_fns" ] && fpath=("$_user_fns" $fpath)
+unset _user_fns
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # case-insensitive
 zstyle ':completion:*' menu select
@@ -90,7 +95,7 @@ export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-ran
 
 # --- Tool inits (each skipped if the tool is not installed yet) ---
 command -v fzf >/dev/null && source <(fzf --zsh)                     # Ctrl+R history, Ctrl+T files, Alt+C cd
-command -v zoxide >/dev/null && eval "$(zoxide init zsh --cmd cd)"   # cd learns your habits; `cd foo` jumps by frecency
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"            # `z foo` jumps by frecency; plain cd stays literal
 command -v starship >/dev/null && eval "$(starship init zsh)"        # prompt
 
 # --- Autosuggestions + syntax highlighting (highlighting must be last) ---
