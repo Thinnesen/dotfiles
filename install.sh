@@ -44,11 +44,15 @@ MANAGED=(
   AGENTS.md
   .zshrc
   .bashrc
+  .vimrc
   .tmux.conf
   .gitconfig
   .config/git/ignore
   .config/git/delta.gitconfig
   .config/gh/config.yml
+  .config/gh-dash/config.yml
+  # htop rewrites htoprc in place; link the directory so that keeps working
+  .config/htop
   .config/starship.toml
   .config/wezterm
   .config/herdr/config.toml

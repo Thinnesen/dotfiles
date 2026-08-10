@@ -62,12 +62,15 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 bindkey -e
 bindkey '^[[1;5C' forward-word    # Ctrl+Right
 bindkey '^[[1;5D' backward-word   # Ctrl+Left
+bindkey '^[[1;3C' forward-word    # Alt+Right
+bindkey '^[[1;3D' backward-word   # Alt+Left
 bindkey '^[[H'    beginning-of-line
 bindkey '^[[F'    end-of-line
 bindkey '^[[3~'   delete-char
 
 # --- Modern CLI replacements ---
 alias ls='eza --icons --group-directories-first'
+alias l='eza -la --icons --group-directories-first --git'
 alias ll='eza -l --icons --group-directories-first --git'
 alias la='eza -la --icons --group-directories-first --git'
 alias lt='eza --tree --level=2 --icons'
@@ -78,8 +81,23 @@ alias grep='grep --color=auto'
 alias lg='lazygit'
 alias python='python3'
 
+# --- Git aliases ---
+alias ga='git add .'
+alias gc='git commit -m "wip"'
+alias gpush='git push'
+alias gpull='git pull && git pull -f --tags'
+alias gall='git add . && git commit -am "wip wip wip" && git push'
+
+# --- tmux aliases ---
+alias tlist='tmux list-session'
+alias tattach='tmux attach-session -t'
+alias tnew='tmux new -s'
+
 # --- kubectl completion (skipped if not installed) ---
 [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+
+# --- kubecolor: colorized kubectl output (skipped if not installed) ---
+command -v kubecolor >/dev/null && alias kubectl='kubecolor'
 
 # --- fzf: Catppuccin Mocha colors + fd as default source ---
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -94,9 +112,32 @@ export FZF_DEFAULT_OPTS=" \
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {}'"
 
 # --- Tool inits (each skipped if the tool is not installed yet) ---
-command -v fzf >/dev/null && source <(fzf --zsh)                     # Ctrl+R history, Ctrl+T files, Alt+C cd
+if command -v fzf >/dev/null; then
+  source <(fzf --zsh)                                                # Ctrl+R history, Ctrl+T files, Alt+C cd
+elif [ -f "$HOME/.fzf.zsh" ]; then
+  source "$HOME/.fzf.zsh"                                            # fallback: fzf installed via its install script
+fi
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"            # `z foo` jumps by frecency; plain cd stays literal
 command -v starship >/dev/null && eval "$(starship init zsh)"        # prompt
+
+# --- Conda: lazy-loaded to keep shell startup fast ---
+# Real init runs only on first `conda` call, then the shim removes itself and
+# hands off to the real conda. Skipped entirely if miniconda is not installed.
+if [ -d "$HOME/miniconda3" ]; then
+  conda() {
+    unset -f conda
+    __conda_setup="$("$HOME/miniconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
+    if [ $? -eq 0 ]; then
+      eval "$__conda_setup"
+    elif [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+      . "$HOME/miniconda3/etc/profile.d/conda.sh"
+    else
+      export PATH="$HOME/miniconda3/bin:$PATH"
+    fi
+    unset __conda_setup
+    conda "$@"
+  }
+fi
 
 # --- Autosuggestions + syntax highlighting (highlighting must be last) ---
 if [ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
