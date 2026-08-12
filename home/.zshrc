@@ -117,7 +117,7 @@ if command -v fzf >/dev/null; then
 elif [ -f "$HOME/.fzf.zsh" ]; then
   source "$HOME/.fzf.zsh"                                            # fallback: fzf installed via its install script
 fi
-command -v zoxide >/dev/null && eval "$(zoxide init zsh)"            # `z foo` jumps by frecency; plain cd stays literal
+command -v zoxide >/dev/null && eval "$(zoxide init zsh --cmd cd)"   # cd learns your habits; `cd foo` jumps by frecency (literal paths still win)
 command -v starship >/dev/null && eval "$(starship init zsh)"        # prompt
 
 # --- Conda: lazy-loaded to keep shell startup fast ---

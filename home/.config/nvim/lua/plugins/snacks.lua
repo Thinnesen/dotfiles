@@ -21,6 +21,14 @@ return {
         explorer = {
           hidden = true,
           ignored = false,
+          win = {
+            list = {
+              keys = {
+                ["l"] = "confirm", -- expand folder / open file
+                ["h"] = "explorer_close", -- collapse folder (or jump to parent)
+              },
+            },
+          },
         },
       },
     },
