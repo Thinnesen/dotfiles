@@ -56,7 +56,7 @@ These mint credentials, so they are deliberately not in the repo and not automat
 3. Generate a new SSH keypair if needed: `ssh-keygen -t ed25519`, then add the public key to GitHub. Private keys are never tracked.
 4. Git identity is tracked in `home/.gitconfig`; verify it with `git config user.name` after install.
 5. Herdr integration: `~/.claude/settings.json` references `~/.claude/hooks/herdr-agent-state.sh`, which the herdr integration installs and overwrites itself. Reinstall herdr (it is in the Brewfile) and run its Claude integration setup. Until then that one SessionStart hook is a harmless no-op failure.
-6. The everything-claude-code plugin populates `~/.claude/scripts/` (hook runners referenced by `settings.json`) and skills. It installs itself from the marketplaces declared inside the tracked `settings.json` on first Claude Code run.
+6. The everything-claude-code plugin provides skills. It installs itself from the marketplaces declared inside the tracked `settings.json` on first Claude Code run. `settings.json` does not reference its hook scripts in `~/.claude/scripts/`, so hooks work without it.
 
 ## Setup on macOS
 
