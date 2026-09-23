@@ -42,6 +42,7 @@ fi
 # Directories are linked as whole-directory symlinks.
 MANAGED=(
   AGENTS.md
+  .config/agent.d
   .zshrc
   .bashrc
   .vimrc

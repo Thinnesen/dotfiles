@@ -139,10 +139,11 @@ Every path in `$HOME` got an explicit include or exclude decision, so nothing sn
 | `.config/herdr/config.toml` | include | herdr keybinds (tmux-style `ctrl+space` prefix) + rose-pine theme; file-level link because the rest of `.config/herdr/` is runtime state (sockets, logs, session) |
 | `.config/bat/` | include | bat config plus Catppuccin theme |
 | `.config/fastfetch/` | include | Splash config |
+| `.config/agent.d/` | include | Shared agent guidelines (`claude.md`: Karpathy-inspired coding guidelines) |
 | `.config/nvim/` | include | LazyVim config incl. `lazy-lock.json` pins |
 | `.local/share/nvim`, caches | exclude | Plugin and runtime state, restored by lazy.nvim |
 | `.claude/settings.json` | include | My Claude Code settings incl. hook wiring (no secrets, audited) |
-| `.claude/CLAUDE.md` | include | Global instructions |
+| `.claude/CLAUDE.md` | include | Global instructions; imports `~/AGENTS.md` and `~/.config/agent.d/claude.md` |
 | `.claude/rules/` | include | Rules I installed and edit |
 | `.claude/agents/` | include | Agent definitions I installed and edit |
 | `.claude/settings.local.json` | exclude | Machine-local permission grants; the global gitignore also excludes this pattern |
